@@ -35,6 +35,8 @@ namespace IntroSkip.Displays
                 textTransform.sizeDelta = new Vector2(100, 20);
                 _skipPromptText.fontSize = 15f;
                 canvas.enabled = true;
+
+                CameraUtils.Core.VisibilityUtils.SetLayer(_skipPromptObject, CameraUtils.Core.VisibilityLayer.UI);
             }
             _skipPromptObject!.SetActive(true);
         }
