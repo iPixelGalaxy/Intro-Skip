@@ -44,7 +44,7 @@ namespace IntroSkip.Displays
                 _skipPromptText.fontSize = 15f;
                 canvas.enabled = true;
 
-                CameraUtils.Core.VisibilityUtils.SetLayer(_skipPromptObject, CameraUtils.Core.VisibilityLayer.UI);
+                _skipPromptObject.layer = 5; //UI
             }
             _enabled = true;
             AnimateIn();

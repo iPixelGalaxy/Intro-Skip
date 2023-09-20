@@ -53,18 +53,21 @@ namespace IntroSkip
             float firstObjectTime = _initData.audioClip.length;
             float lastObjectTime = -1f;
 
-            if (beatmapDataItems.Where(m => (m is NoteData || m is ObstacleData)).Count() == 0) return;
+            int count = 0;
 
             foreach (var item in beatmapDataItems)
             {
                 if (item is NoteData note || (item is ObstacleData obstacle && IsObstacleInHeadArea(obstacle)))
                 {
+                    count++;
                     if (item.time < firstObjectTime)
                         firstObjectTime = item.time;
                     if (item.time > lastObjectTime)
                         lastObjectTime = item.time;
                 }
             }
+
+            if (count == 0) return;
 
             if (firstObjectTime > 5f)
             {

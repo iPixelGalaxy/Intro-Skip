@@ -1,6 +1,7 @@
 ﻿using BeatSaberMarkupLanguage;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace IntroSkip.Displays
 {
@@ -36,7 +37,7 @@ namespace IntroSkip.Displays
                 _skipPromptText.fontSize = 15f;
                 canvas.enabled = true;
 
-                CameraUtils.Core.VisibilityUtils.SetLayer(_skipPromptObject, CameraUtils.Core.VisibilityLayer.UI);
+                _skipPromptObject.layer = 5; //UI
             }
             _skipPromptObject!.SetActive(true);
         }
