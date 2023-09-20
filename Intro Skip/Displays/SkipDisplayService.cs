@@ -1,6 +1,7 @@
 ﻿using BeatSaberMarkupLanguage;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace IntroSkip.Displays
 {
@@ -35,6 +36,8 @@ namespace IntroSkip.Displays
                 textTransform.sizeDelta = new Vector2(100, 20);
                 _skipPromptText.fontSize = 15f;
                 canvas.enabled = true;
+
+                _skipPromptObject.layer = 5; //UI
             }
             _skipPromptObject!.SetActive(true);
         }
