@@ -1,5 +1,4 @@
 ﻿using SiraUtil.Logging;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.XR;
 using Zenject;
@@ -15,7 +14,6 @@ namespace IntroSkip
         private AudioTimeSyncController _audioTimeSyncController;
         private readonly IReadonlyBeatmapData _readonlyBeatmapData;
         private readonly AudioTimeSyncController.InitData _initData;
-        private readonly VRPlatformUtils _vrControllersInputManager;
         private readonly Rect _headSpaceRect = new Rect(1, 1, 2, 2);
 
         private float _introSkipTime = -1f;
@@ -27,9 +25,9 @@ namespace IntroSkip
         public bool CanSkip => InIntroPhase || InOutroPhase;
         public bool InIntroPhase => (Utilities.AudioTimeSyncSource(ref _audioTimeSyncController).time < _introSkipTime) && _skippableIntro;
         public bool InOutroPhase => Utilities.AudioTimeSyncSource(ref _audioTimeSyncController).time > _lastObjectSkipTime && Utilities.AudioTimeSyncSource(ref _audioTimeSyncController).time < _outroSkipTime && _skippableOutro;
-        public bool WantsToSkip => _audioTimeSyncController.state == AudioTimeSyncController.State.Playing && (_vrControllersInputManager.TriggerValueDefaultImplementation(XRNode.LeftHand) >= .8 || _vrControllersInputManager.TriggerValueDefaultImplementation(XRNode.RightHand) >= .8 || Input.GetKey(KeyCode.I));
+        public bool WantsToSkip => _audioTimeSyncController.state == AudioTimeSyncController.State.Playing && (VRPlatformUtils.TriggerValueDefaultImplementation(XRNode.LeftHand) >= .8 || VRPlatformUtils.TriggerValueDefaultImplementation(XRNode.RightHand) >= .8 || Input.GetKey(KeyCode.I));
 
-        public SkipDaemon(Config config, SiraLog siraLog, IVRPlatformHelper vrPlatformHelper, ISkipDisplayService skipDisplayService, AudioTimeSyncController audioTimeSyncController, IReadonlyBeatmapData readonlyBeatmapData, VRPlatformUtils vrControllersInputManager, AudioTimeSyncController.InitData initData)
+        public SkipDaemon(Config config, SiraLog siraLog, IVRPlatformHelper vrPlatformHelper, ISkipDisplayService skipDisplayService, AudioTimeSyncController audioTimeSyncController, IReadonlyBeatmapData readonlyBeatmapData, AudioTimeSyncController.InitData initData)
         {
             _config = config;
             _siraLog = siraLog;
@@ -38,7 +36,6 @@ namespace IntroSkip
             _skipDisplayService = skipDisplayService;
             _readonlyBeatmapData = readonlyBeatmapData;
             _audioTimeSyncController = audioTimeSyncController;
-            _vrControllersInputManager = vrControllersInputManager;
         }
 
         public void Initialize()
@@ -93,21 +90,21 @@ namespace IntroSkip
                 if (!_skipDisplayService.Active)
                     _skipDisplayService.Show();
 
-                //if (WantsToSkip)
-                //{
-                //    _vrPlatformHelper.TriggerHapticPulse(XRNode.LeftHand, 0.1f, 0.2f, 1);
-                //    _vrPlatformHelper.TriggerHapticPulse(XRNode.RightHand, 0.1f, 0.2f, 1);
-                //    if (InIntroPhase)
-                //    {
-                //        Utilities.AudioTimeSyncSource(ref _audioTimeSyncController).time = _introSkipTime;
-                //        _skippableIntro = false;
-                //    }
-                //    else if (InOutroPhase)
-                //    {
-                //        Utilities.AudioTimeSyncSource(ref _audioTimeSyncController).time = _outroSkipTime;
-                //        _skippableOutro = false;
-                //    }
-                //}
+                if (WantsToSkip)
+                {
+                    _vrPlatformHelper.TriggerHapticPulse(XRNode.LeftHand, 0.1f, 0.2f, 1);
+                    _vrPlatformHelper.TriggerHapticPulse(XRNode.RightHand, 0.1f, 0.2f, 1);
+                    if (InIntroPhase)
+                    {
+                        Utilities.AudioTimeSyncSource(ref _audioTimeSyncController).time = _introSkipTime;
+                        _skippableIntro = false;
+                    }
+                    else if (InOutroPhase)
+                    {
+                        Utilities.AudioTimeSyncSource(ref _audioTimeSyncController).time = _outroSkipTime;
+                        _skippableOutro = false;
+                    }
+                }
             }
             else if (_skipDisplayService.Active && !CanSkip)
             {
